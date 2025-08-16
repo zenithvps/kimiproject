@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const axios = require('axios');
 require('dotenv').config();
 
 const app = express();
@@ -39,8 +40,8 @@ app.post('/chat', async (req, res) => {
       });
     }
 
-    // Check if OpenAI API key is available
-    if (!process.env.OPENAI_API_KEY) {
+    // Check if OpenRouter API key is available
+    if (!process.env.OPENROUTER_API_KEY) {
       // Return dummy response if no API key
       const dummyResponses = [
         "That's an interesting question! Let me think about that...",
@@ -54,19 +55,14 @@ app.post('/chat', async (req, res) => {
       ];
       
       const response = dummyResponses[Math.floor(Math.random() * dummyResponses.length)] +
-        " This is a dummy response since OpenAI API key is not configured. To get real AI responses, please set the OPENAI_API_KEY environment variable.";
+        " This is a dummy response since OpenRouter API key is not configured. To get real AI responses, please set the OPENROUTER_API_KEY environment variable.";
       
       return res.json({ message: response });
     }
 
-    // Use OpenAI API if available
-    const OpenAI = require('openai');
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+    // Use OpenRouter API
+    const openRouterResponse = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+      model: process.env.OPENROUTER_MODEL || 'openai/gpt-4',
       messages: [
         {
           role: "system",
@@ -79,18 +75,43 @@ app.post('/chat', async (req, res) => {
       ],
       max_tokens: 1000,
       temperature: 0.7,
+    }, {
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': process.env.FRONTEND_URL || 'http://localhost:3000',
+        'X-Title': 'MyGrok AI Chatbot'
+      }
     });
 
-    const response = completion.choices[0].message.content;
+    const response = openRouterResponse.data.choices[0].message.content;
     res.json({ message: response });
 
   } catch (error) {
     console.error('Chat endpoint error:', error);
     
-    if (error.code === 'insufficient_quota' || error.code === 'invalid_api_key') {
-      return res.status(401).json({ 
-        error: 'OpenAI API key is invalid or quota exceeded. Please check your configuration.' 
-      });
+    if (error.response) {
+      // OpenRouter API error
+      const status = error.response.status;
+      const data = error.response.data;
+      
+      if (status === 401) {
+        return res.status(401).json({ 
+          error: 'OpenRouter API key is invalid. Please check your configuration.' 
+        });
+      } else if (status === 429) {
+        return res.status(429).json({ 
+          error: 'Rate limit exceeded. Please try again later.' 
+        });
+      } else if (status === 402) {
+        return res.status(402).json({ 
+          error: 'Insufficient credits. Please check your OpenRouter account.' 
+        });
+      } else {
+        return res.status(status).json({ 
+          error: data.error?.message || 'OpenRouter API error occurred.' 
+        });
+      }
     }
     
     res.status(500).json({ 
@@ -115,10 +136,12 @@ app.listen(PORT, () => {
   console.log(`📝 Chat endpoint: http://localhost:${PORT}/chat`);
   console.log(`❤️  Health check: http://localhost:${PORT}/health`);
   
-  if (!process.env.OPENAI_API_KEY) {
-    console.log('⚠️  OpenAI API key not found. Using dummy responses.');
-    console.log('   Set OPENAI_API_KEY environment variable for real AI responses.');
+  if (!process.env.OPENROUTER_API_KEY) {
+    console.log('⚠️  OpenRouter API key not found. Using dummy responses.');
+    console.log('   Set OPENROUTER_API_KEY environment variable for real AI responses.');
+    console.log('   Get your API key from: https://openrouter.ai/keys');
   } else {
-    console.log('✅ OpenAI API key found. Real AI responses enabled.');
+    console.log('✅ OpenRouter API key found. Real AI responses enabled.');
+    console.log(`🤖 Using model: ${process.env.OPENROUTER_MODEL || 'openai/gpt-4'}`);
   }
 });

@@ -28,16 +28,25 @@ npm run dev:frontend
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:5000
 
-## 🔧 Konfigurasi OpenAI (Opsional)
+## 🔧 Konfigurasi OpenRouter (Opsional)
 
 Untuk mendapatkan respons AI yang sebenarnya:
 
-1. Dapatkan API key dari [OpenAI Platform](https://platform.openai.com/api-keys)
-2. Edit file `backend/.env`:
+1. Daftar di [OpenRouter](https://openrouter.ai)
+2. Dapatkan API key dari [Keys page](https://openrouter.ai/keys)
+3. Edit file `backend/.env`:
 ```env
-OPENAI_API_KEY=your_api_key_here
+OPENROUTER_API_KEY=your_api_key_here
+OPENROUTER_MODEL=openai/gpt-4
 ```
-3. Restart backend server
+4. Restart backend server
+
+### Model yang Tersedia
+- **openai/gpt-4**: GPT-4 (default)
+- **openai/gpt-3.5-turbo**: GPT-3.5 Turbo
+- **anthropic/claude-3-opus**: Claude 3 Opus
+- **anthropic/claude-3-sonnet**: Claude 3 Sonnet
+- **google/gemini-pro**: Google Gemini Pro
 
 ## 🎯 Fitur yang Tersedia
 
@@ -55,7 +64,7 @@ OPENAI_API_KEY=your_api_key_here
 ✅ **Technical Features**
 - React + TypeScript frontend
 - Node.js + Express backend
-- OpenAI API integration
+- OpenRouter API integration
 - Rate limiting & security
 
 ## 🐛 Troubleshooting
@@ -79,6 +88,13 @@ npm run dev
 # Kill process di port 3000 atau 5000
 lsof -ti:3000 | xargs kill -9
 lsof -ti:5000 | xargs kill -9
+```
+
+### CSS Error
+Jika ada error CSS, pastikan Tailwind CSS sudah terinstall dengan benar:
+```bash
+cd frontend
+npm install
 ```
 
 ## 📱 Mobile Testing

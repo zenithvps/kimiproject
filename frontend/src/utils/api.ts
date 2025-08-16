@@ -23,7 +23,9 @@ export const sendMessage = async (message: string): Promise<string> => {
     return response.data.message;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.error || 'Failed to send message');
+      const errorMessage = error.response?.data?.error || 'Failed to send message';
+      console.error('API Error:', error.response?.status, errorMessage);
+      throw new Error(errorMessage);
     }
     throw error;
   }
@@ -46,5 +48,5 @@ export const getDummyResponse = async (message: string): Promise<string> => {
   ];
   
   return responses[Math.floor(Math.random() * responses.length)] + 
-         " This is a dummy response since the API is not connected. In a real implementation, this would be replaced with actual AI responses from OpenAI or another model.";
+         " This is a dummy response since the OpenRouter API is not connected. In a real implementation, this would be replaced with actual AI responses from OpenRouter.";
 };

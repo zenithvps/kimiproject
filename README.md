@@ -10,7 +10,7 @@ Website AI chatbot dengan tampilan, interaksi, dan alur pengguna yang 100% ident
 - **Chat History**: Riwayat chat tersimpan di browser (localStorage)
 - **Responsive Design**: Optimal untuk mobile dan desktop
 - **Animasi Smooth**: Efek animasi dengan Framer Motion
-- **API Integration**: Terintegrasi dengan OpenAI API (opsional)
+- **API Integration**: Terintegrasi dengan OpenRouter API (opsional)
 
 ## 🛠️ Tech Stack
 
@@ -23,7 +23,7 @@ Website AI chatbot dengan tampilan, interaksi, dan alur pengguna yang 100% ident
 
 ### Backend
 - Node.js + Express
-- OpenAI API
+- OpenRouter API
 - CORS & Security middleware
 - Rate limiting
 
@@ -66,9 +66,9 @@ npm install
 cp .env.example .env
 ```
 
-Edit file `.env` dan tambahkan OpenAI API key (opsional):
+Edit file `.env` dan tambahkan OpenRouter API key (opsional):
 ```env
-OPENAI_API_KEY=your_openai_api_key_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
 ### 3. Setup Frontend
@@ -116,7 +116,8 @@ npm start
 PORT=5000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
-OPENAI_API_KEY=your_openai_api_key_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+OPENROUTER_MODEL=openai/gpt-4
 ```
 
 #### Frontend (vite.config.ts)
@@ -209,6 +210,25 @@ Health check endpoint
 - **Breakpoints**: Tailwind responsive breakpoints
 - **Touch Friendly**: Optimized untuk touch devices
 - **Keyboard Handling**: Proper keyboard navigation
+
+## 🤖 OpenRouter Integration
+
+### Supported Models
+- **openai/gpt-4**: GPT-4 model
+- **openai/gpt-3.5-turbo**: GPT-3.5 Turbo model
+- **anthropic/claude-3-opus**: Claude 3 Opus model
+- **anthropic/claude-3-sonnet**: Claude 3 Sonnet model
+- **google/gemini-pro**: Google Gemini Pro model
+- Dan banyak model lainnya...
+
+### Setup OpenRouter
+1. Daftar di [OpenRouter](https://openrouter.ai)
+2. Dapatkan API key dari [Keys page](https://openrouter.ai/keys)
+3. Set environment variable:
+```env
+OPENROUTER_API_KEY=your_api_key_here
+OPENROUTER_MODEL=openai/gpt-4
+```
 
 ## 🎯 Roadmap
 
